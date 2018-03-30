@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 
 
+// main controller for the application
 public class Controller {
 
     private int numPlayers;
@@ -58,9 +59,12 @@ public class Controller {
     public void newGame()
     {
         memoryModel = new MemoryModel();
+        memoryModel.setNumPlayers(numPlayers);
         memoryModel.initGame();
-        MemoryController memoryController = new MemoryController();
         MemoryView memoryView = new MemoryView();
+        MemoryController memoryController = new MemoryController(memoryModel, memoryView);
+        memoryView.setController(memoryController);
+        memoryView.openView();
     }
 
     // Quit button
