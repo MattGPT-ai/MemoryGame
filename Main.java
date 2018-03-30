@@ -11,7 +11,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        // instantiate the model
+        Memory_Model model = new Memory_Model();
+
+        // load the view from fxml
         Parent root = FXMLLoader.load(getClass().getResource("memory.fxml"));
+
+        // set scene and show primary stage
         primaryStage.setTitle("Memory");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -21,4 +28,4 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-}
+} // Main Application
