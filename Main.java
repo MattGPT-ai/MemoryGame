@@ -13,10 +13,13 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         // instantiate the model
-        Memory_Model model = new Memory_Model();
+        MemoryModel model = new MemoryModel();
 
         // load the view from fxml
         Parent root = FXMLLoader.load(getClass().getResource("memory.fxml"));
+
+        //Button example = (Button) root.lookup("#button"); // #button exists in FXMLDocument.fxml
+        //example.setOnAction(e -> { myController.doSomething(); });
 
         // set scene and show primary stage
         primaryStage.setTitle("Memory");

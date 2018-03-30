@@ -10,6 +10,7 @@
 <!-- This file creates the UI and acts as the View in MVC -->
 
 <GridPane fx:controller="memory.Controller"
+          stylesheets="/memory/style.css"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <Text text="Let's play Memory!"
           GridPane.columnIndex="0" GridPane.rowIndex="0"
@@ -21,7 +22,7 @@
     <TextField fx:id="nPlayersField"
             GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-    <Button text="Play!"  GridPane.columnIndex="1" GridPane.rowIndex="2">
+    <Button text="Play!"  onAction="#newGame" GridPane.columnIndex="1" GridPane.rowIndex="2">
 <!--    <graphic>
         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
             <image>

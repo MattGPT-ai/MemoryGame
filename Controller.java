@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 public class Controller {
 
     private int numPlayers;
+    private MemoryModel memoryModel;
 
     @FXML
     private TextField nPlayersField;
@@ -21,6 +22,11 @@ public class Controller {
     Button playButton;
 
 
+    // constructor called before initialize
+    public Controller()
+    {
+        numPlayers = 2;
+    }
 
     // this method is automatically called by fxml to initialize the controller
     @FXML
@@ -32,7 +38,6 @@ public class Controller {
 
 
         // set number of players and force to only have digits entered
-        numPlayers = 2;
 
         nPlayersField.setPrefColumnCount(2);
         nPlayersField.setText(Integer.toString(numPlayers));
@@ -47,6 +52,15 @@ public class Controller {
                 numPlayers = Integer.parseInt(newValue);
             }
         });
+    }
+
+
+    public void newGame()
+    {
+        memoryModel = new MemoryModel();
+        memoryModel.initGame();
+        MemoryController memoryController = new MemoryController();
+        MemoryView memoryView = new MemoryView();
     }
 
     // Quit button
