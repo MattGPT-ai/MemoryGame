@@ -3,6 +3,9 @@ package memory;
 import java.util.ArrayList;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import java.util.concurrent.TimeUnit;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.collections.ArrayChangeListener;
 import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
@@ -18,20 +21,28 @@ import deck.Deck;
 
 public class MemoryModel {
 
-    //public class Player
-
-    //
+    // member variables
+    private MemoryController memoryController;
     private Deck deck;
     private SimpleIntegerProperty numPlayers;
-    private IntegerProperty currentPlayer;
+    private SimpleIntegerProperty currentPlayer;
+    private SimpleIntegerProperty playerShift;
+    private SimpleIntegerProperty displayPlayer;
     private ArrayList<IntegerProperty> playerScores;
-    //private ObservableArray<Integer> playerScores;
+    private MemoryController.CardBlock firstCard;
+    private Boolean secondPick;
+    private int totalScore;
 
 
     public MemoryModel()
     {
         numPlayers = new SimpleIntegerProperty(2);
         deck = new Deck();
+        playerShift = new SimpleIntegerProperty(1); // to display 1-indexed value
+    }
+
+    public void setMemoryController(MemoryController mc) {
+        memoryController = mc;
     }
 
     public Deck getDeck() {
@@ -48,7 +59,7 @@ public class MemoryModel {
         numPlayers.set(newVal);
     }
 
-    public IntegerProperty getCurrentPlayerProperty() {
+    public SimpleIntegerProperty getCurrentPlayerProperty() {
         return currentPlayer;
     }
 
@@ -66,6 +77,11 @@ public class MemoryModel {
     {
 
         deck.shuffleDeck();
+        secondPick = false;
+        currentPlayer = new SimpleIntegerProperty(); // initializes to 0
+
+
+        totalScore = 0;
 
         playerScores = new ArrayList<IntegerProperty>(numPlayers.get());
         for(int i=0; i<numPlayers.get(); i++) {
@@ -75,61 +91,58 @@ public class MemoryModel {
         System.out.println("Beginning new game with " + numPlayers.get() + " players!");
 
 
-        //ObservableList<Integer> playerList = FXCollections.observableArrayList();
-        //ObservableList<Integer> playerList = new ObservableList<Integer>();
-
-        /*playerScores = new ObservableArray<Integer>() {
-            @Override
-            public void addListener(ArrayChangeListener<Integer> listener) {
-
-            }
-
-            @Override
-            public void removeListener(ArrayChangeListener<Integer> listener) {
-
-            }
-
-            @Override
-            public void resize(int size) {
-
-            }
-
-            @Override
-            public void ensureCapacity(int capacity) {
-
-            }
-
-            @Override
-            public void trimToSize() {
-
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public void addListener(InvalidationListener listener) {
-
-            }
-
-            @Override
-            public void removeListener(InvalidationListener listener) {
-
-            }
-        } */
     } // initGame
 
-    public void executeNextRound() {
 
+    public Boolean nextFlip(MemoryController.CardBlock cardBlock) {
+
+        Deck.Card card = cardBlock.getCard();
+
+        // simply pick first card
+        if(!secondPick) {
+            secondPick = true;
+            firstCard = cardBlock;
+        }
+
+        // if picking second card, check for match
+        else {
+
+
+            // if cards match, increment player score and total score
+            if(card.getRank() == firstCard.getCard().getRank()) {
+                IntegerProperty pScore = playerScores.get(currentPlayer.get());
+                pScore.set(pScore.get()+1);
+                totalScore++;
+                checkWinCondition();
+            }
+
+            // if they don't match, tell controller to flip cards back down
+            else {
+                memoryController.flipDown(firstCard);
+                memoryController.flipDown(cardBlock);
+            }
+            secondPick = false;
+        }
+
+        // cycle through players for next turn
+        cyclePlayer();
+
+        return true;
     }
 
+    private void cyclePlayer() {
+        currentPlayer.set(currentPlayer.getValue()+1);
+        if(currentPlayer.get() >= numPlayers.get()) {
+            currentPlayer.set(0);
+        }
+    }
+
+    private void checkWinCondition() {
+
+        if(totalScore >= 26) {
+            memoryController.displayWinner(currentPlayer.get()+1);
+        }
+    }
 
 
 } // Model

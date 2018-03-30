@@ -1,22 +1,68 @@
 package memory;
 
+import deck.Deck;
 import javafx.scene.control.Button;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import deck.Deck;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class MemoryController {
 
     // supporting class to map card spaces
     public class CardBlock {
+
         private Deck.Card card;
         private Button button;
+        private Boolean cardUp;
 
         public CardBlock(Deck.Card c, Button b) {
             card = c;
             button = b;
+            cardUp = false;
         }
+
+        public Deck.Card getCard() {
+            return card;
+        }
+
+        public Button getButton() {
+            return button;
+        }
+
+        public void setCardUp(Boolean up) {
+            cardUp = up;
+        }
+
+        public void flipCard() {
+            if(!cardUp) {
+                cardUp = true;
+                String fn = card.imageFilename();
+                //System.out.println("clicked card! " + fn);
+                Image frontImage = new Image(fn, 50, 100, true, false);
+                button.setGraphic(new ImageView(frontImage));
+                memoryModel.nextFlip(this);
+                // pause after showing second card
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                }
+                catch(InterruptedException ie) {
+                    System.err.println(ie);
+                }
+
+            }
+            //else say card is already up or do nothing
+        }
+
     }
 
     // Memory Controller
@@ -44,17 +90,54 @@ public class MemoryController {
         return memoryModel.getPlayerScores().get(i);
     }
 
+    public SimpleIntegerProperty getCurrentPlayer() {
+        return memoryModel.getCurrentPlayerProperty();
+    }
+
+    /*
+    private EventHandler<ActionEvent> flipCard = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            memoryModel.
+        }
+    };*/
+
+
     private void fillCardBlockGrid() {
 
         int index = 0;
         for(int row=0; row<memoryView.getNumRows(); row++) {
             for(int col=0; col<memoryView.getNumCols(); col++) {
-                Button b = (Button)memoryView.getCardGrid().getChildren().get(0);
-                CardBlock cardBlock = new CardBlock(getCardFromDeck(index), b);
+                Deck.Card c = getCardFromDeck(index);
+                Button b = (Button)memoryView.getCardGrid().getChildren().get(index);
+                CardBlock cardBlock = new CardBlock(c, b);
+                b.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        cardBlock.flipCard();
+                    }
+                });
                 index++;
             }
         }
 
     }
+
+    public void flipDown(CardBlock cb) {
+        cb.setCardUp(false);
+        cb.getButton().setGraphic(new ImageView(memoryView.getBackImage()));
+    }
+
+    public void displayWinner(int winningPlayer) {
+        VBox dialogVbox = new VBox(20);
+        Text errText = new Text("Number of players must be between 1 and 8!\nYou chose " + winningPlayer);
+        dialogVbox.getChildren().add(errText);
+        Scene dialogScene = new Scene(dialogVbox, 300, 50);
+        final Stage dialog = new Stage();
+        dialog.setScene(dialogScene);
+        dialog.show();
+        memoryView.closeGameView();
+    }
+
 
 }

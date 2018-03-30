@@ -16,12 +16,15 @@ public class MemoryView {
 
     private MemoryController controller;
     private GridPane cardGrid;
+    private Stage memoryStage;
     private int numRows;
     private int numCols;
-
+    Image backImage;
 
     public MemoryView()
     {
+
+        int cardHeight = 100;
 
 
         // set up grid
@@ -30,7 +33,7 @@ public class MemoryView {
         cardGrid.setVgap(5);
         cardGrid.setHgap(5);
 
-        Image playImage = new Image("/memory/images/blue_back.jpg", 50, 50, true, false);
+        backImage = new Image("/memory/images/blue_back.jpg", 50, cardHeight, true, false);
 
         numRows = 4;
         numCols = 13;
@@ -40,10 +43,13 @@ public class MemoryView {
         for(int row=0; row<numRows; row++) {
             for(int col=0; col<numCols; col++) {
 
-                Button cardButton = new Button("", new ImageView(playImage));
+                Button cardButton = new Button("", new ImageView(backImage));
                 cardGrid.setRowIndex(cardButton, row);
                 cardGrid.setColumnIndex(cardButton, col);
-                cardGrid.getChildren().addAll(cardButton);
+
+                //cardButton.setOnAction()
+
+                cardGrid.getChildren().add(cardButton);
 
                 //Deck.Card
 
@@ -60,20 +66,42 @@ public class MemoryView {
     public void openView()
     {
 
+        // add view of player scores
+
+        Label pTitle = new Label("Player:");
+        cardGrid.setRowIndex(pTitle, numRows+1);
+        Label sTitle = new Label("Score:");
+        cardGrid.setRowIndex(sTitle, numRows+2);
+        Label cTitle = new Label("Current player: ");
+        cardGrid.setRowIndex(cTitle, numRows+3);
+        Label cLabel = new Label();
+        cardGrid.setRowIndex(cLabel, numRows+3);
+        cardGrid.setColumnIndex(cLabel, 1);
+        cLabel.textProperty().bind(controller.getCurrentPlayer().asString());
+        cardGrid.getChildren().addAll(pTitle, sTitle, cTitle, cLabel);
+
+
+        for(int i=0; i<controller.getNumPlayers(); i++) {
+            Label pLabel = new Label(Integer.toString(i+1));
+            cardGrid.setRowIndex(pLabel, numRows+1);
+            cardGrid.setColumnIndex(pLabel, i+1);
+            Label scoreLabel = new Label();
+            //scoreLabel.setAlignment(Pos.CENTER);
+            scoreLabel.textProperty().bind(controller.getPlayerScore(i).asString());
+            scoreLabel.setPadding(new Insets(25, 30, 50, 25));
+            cardGrid.setRowIndex(scoreLabel, numRows+2);
+            cardGrid.setColumnIndex(scoreLabel, i+1);
+            cardGrid.getChildren().addAll(pLabel, scoreLabel);
+
+        }
+
+
         // open new window
-        Scene memoryScene = new Scene(cardGrid, 800, 600);
-        Stage memoryStage = new Stage();
+        Scene memoryScene = new Scene(cardGrid, 1000, 600);
+        memoryStage = new Stage();
         memoryStage.setTitle("Memory game");
         memoryStage.setScene(memoryScene);
         memoryStage.show();
-
-        for(int i=0; i<controller.getNumPlayers(); i++) {
-            Label scoreLabel = new Label();
-            scoreLabel.setAlignment(Pos.CENTER_LEFT);
-            scoreLabel.textProperty().bind(controller.getPlayerScore(i).asString());
-            //text.setText(Integer.toString(P1_Score));
-            scoreLabel.setPadding(new Insets(25, 30, 50, 25));
-        }
 
     }
 
@@ -87,6 +115,14 @@ public class MemoryView {
 
     public GridPane getCardGrid() {
         return cardGrid;
+    }
+
+    public Image getBackImage() {
+        return backImage;
+    }
+
+    public void closeGameView() {
+        memoryStage.close();
     }
 
 

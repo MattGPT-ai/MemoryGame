@@ -63,6 +63,7 @@ public class Controller {
         memoryModel.initGame();
         MemoryView memoryView = new MemoryView();
         MemoryController memoryController = new MemoryController(memoryModel, memoryView);
+        memoryModel.setMemoryController(memoryController);
         memoryView.setController(memoryController);
         memoryView.openView();
     }
