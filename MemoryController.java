@@ -2,6 +2,8 @@ package memory;
 
 import deck.Deck;
 import java.util.ArrayList;
+
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -118,13 +120,16 @@ public class MemoryController{
                     public void handle(ActionEvent event) {
                         cardBlock.flipCard();
 
-                        // pause after showing second card
-                        try {
-                            TimeUnit.SECONDS.sleep(1);
-                        }
-                        catch(InterruptedException ie) {
-                            System.err.println(ie);
-                        }
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                                // pause after showing second card
+                                try {
+                                    TimeUnit.SECONDS.sleep(1);
+                                } catch (InterruptedException ie) {
+                                    System.err.println(ie);
+                                }
+                            }
+                        });
 
                     }
                 });
