@@ -72,6 +72,10 @@ public class MemoryModel {
         return playerScores;
     }
 
+    public MemoryController.CardBlock getFirstCard() {
+        return firstCard;
+    }
+
     // begin game
     public void initGame()
     {
@@ -118,8 +122,7 @@ public class MemoryModel {
 
             // if they don't match, tell controller to flip cards back down
             else {
-                memoryController.flipDown(firstCard);
-                memoryController.flipDown(cardBlock);
+                return false;
             }
             secondPick = false;
         }

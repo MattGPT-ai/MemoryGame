@@ -50,7 +50,8 @@ public class MemoryController {
                 //System.out.println("clicked card! " + fn);
                 Image frontImage = new Image(fn, 50, 100, true, false);
                 button.setGraphic(new ImageView(frontImage));
-                memoryModel.nextFlip(this);
+                Boolean flipBack = memoryModel.nextFlip(this);
+
                 // pause after showing second card
                 try {
                     TimeUnit.SECONDS.sleep(5);
@@ -59,8 +60,18 @@ public class MemoryController {
                     System.err.println(ie);
                 }
 
+                if(flipBack) {
+                    memoryModel.getFirstCard().flipDown();
+                    flipDown();
+
+                }
+
             }
             //else say card is already up or do nothing
+        }
+        public void flipDown() {
+            cardUp = false;
+            button.setGraphic(new ImageView(memoryView.getBackImage()));
         }
 
     }
@@ -94,13 +105,6 @@ public class MemoryController {
         return memoryModel.getCurrentPlayerProperty();
     }
 
-    /*
-    private EventHandler<ActionEvent> flipCard = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            memoryModel.
-        }
-    };*/
 
 
     private void fillCardBlockGrid() {
