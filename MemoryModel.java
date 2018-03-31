@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import deck.Deck;
+import javafx.util.Pair;
 
 
 /**
@@ -22,6 +23,8 @@ public class MemoryModel {
     private SimpleIntegerProperty displayPlayer;
     private ArrayList<IntegerProperty> playerScores;
     private MemoryController.CardBlock firstCard;
+    private MemoryController.CardBlock[] lastPair;
+    //private Boolean matchedLast;
     private Boolean secondPick;
     private int totalScore;
 
@@ -30,6 +33,7 @@ public class MemoryModel {
     {
         numPlayers = new SimpleIntegerProperty(2);
         deck = new Deck();
+        //matchedLast = false;
         //playerShift = new SimpleIntegerProperty(1); // to display 1-indexed value
     }
 
@@ -101,13 +105,18 @@ public class MemoryModel {
 
         // simply pick first card
         if(!secondPick) {
+
+            // hide previous pair
+            if(lastPair != null) { // !matchedLast
+                memoryController.flipBack(lastPair);
+            }
+
             secondPick = true;
             firstCard = cardBlock;
         }
 
         // if picking second card, check for match
         else {
-
 
             // if cards match, increment player score and total score
             if(card.getRank() == firstCard.getCard().getRank()) {
@@ -116,10 +125,14 @@ public class MemoryModel {
                 totalScore++;
                 checkWinCondition();
                 flipBack = 2;
+                lastPair = null;
+                //matchedLast = true;
             }
 
             // if they don't match, tell controller to flip cards back down
             else {
+                lastPair = new MemoryController.CardBlock[] {firstCard, cardBlock};
+                //matchedLast = false;
                 flipBack = 1;
             }
 
@@ -130,6 +143,7 @@ public class MemoryModel {
 
         }
 
+        // deprecated
         return flipBack;
     }
 

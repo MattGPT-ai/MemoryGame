@@ -55,13 +55,14 @@ public class MemoryController{
                 //button.
                 int flipBack = memoryModel.nextFlip(this);
 
-
+                /*
                 if(flipBack == 1) {
                     memoryModel.getFirstCard().flipDown();
                     flipDown();
 
-                }
-                else if(flipBack == 2) {
+                }*/
+
+                if(flipBack == 2) {
                     memoryModel.getFirstCard().getButton().setGraphic(null);
                     button.setGraphic(null);
                 }
@@ -74,7 +75,7 @@ public class MemoryController{
             button.setGraphic(new ImageView(memoryView.getBackImage()));
         }
 
-    }
+     }
 
     // Memory Controller
 
@@ -120,16 +121,19 @@ public class MemoryController{
                     public void handle(ActionEvent event) {
                         cardBlock.flipCard();
 
-                        Platform.runLater(new Runnable() {
+                        new Thread(){
                             public void run() {
-                                // pause after showing second card
+
                                 try {
-                                    TimeUnit.SECONDS.sleep(1);
-                                } catch (InterruptedException ie) {
-                                    System.err.println(ie);
+                                    Thread.sleep(100);
+                                    //System.out.println("printin");
+                                    //b.setGraphic(null);
+                                } catch(InterruptedException ex) {
+                                    Thread.currentThread().interrupt();
                                 }
+
                             }
-                        });
+                        }.start();
 
                     }
                 });
@@ -139,17 +143,18 @@ public class MemoryController{
 
     }
 
-    /*
-    public void flipDown(CardBlock cb) {
-        cb.setCardUp(false);
-        cb.getButton().setGraphic(new ImageView(memoryView.getBackImage()));
-    }*/
+    public void flipBack(CardBlock[] cba) {
+        for(int i=0; i<2; i++) {
+            cba[i].setCardUp(false);
+            cba[i].getButton().setGraphic(new ImageView(memoryView.getBackImage()));
+        }
+    }
 
     public void displayWinners(ArrayList<Integer> winningPlayers) {
         VBox dialogVbox = new VBox(20);
         String msg = "Winning players!\n";
         for(Integer i: winningPlayers) {
-            msg += i + " ";
+            msg += i+1 + " ";
         }
         Text text = new Text(msg);
         dialogVbox.getChildren().add(text);
