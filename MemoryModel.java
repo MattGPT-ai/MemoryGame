@@ -100,6 +100,7 @@ public class MemoryModel {
 
     public Boolean nextFlip(MemoryController.CardBlock cardBlock) {
 
+        Boolean flipBack = false;
         Deck.Card card = cardBlock.getCard();
 
         // simply pick first card
@@ -122,7 +123,7 @@ public class MemoryModel {
 
             // if they don't match, tell controller to flip cards back down
             else {
-                return false;
+                flipBack = true;
             }
             secondPick = false;
         }
@@ -130,7 +131,7 @@ public class MemoryModel {
         // cycle through players for next turn
         cyclePlayer();
 
-        return true;
+        return flipBack;
     }
 
     private void cyclePlayer() {

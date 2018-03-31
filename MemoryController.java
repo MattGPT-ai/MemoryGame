@@ -52,13 +52,13 @@ public class MemoryController {
                 button.setGraphic(new ImageView(frontImage));
                 Boolean flipBack = memoryModel.nextFlip(this);
 
-                // pause after showing second card
+                /*// pause after showing second card
                 try {
                     TimeUnit.SECONDS.sleep(5);
                 }
                 catch(InterruptedException ie) {
                     System.err.println(ie);
-                }
+                }*/
 
                 if(flipBack) {
                     memoryModel.getFirstCard().flipDown();
@@ -134,7 +134,7 @@ public class MemoryController {
 
     public void displayWinner(int winningPlayer) {
         VBox dialogVbox = new VBox(20);
-        Text errText = new Text("Number of players must be between 1 and 8!\nYou chose " + winningPlayer);
+        Text errText = new Text("Player " + winningPlayer + "WINS!");
         dialogVbox.getChildren().add(errText);
         Scene dialogScene = new Scene(dialogVbox, 300, 50);
         final Stage dialog = new Stage();
