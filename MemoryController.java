@@ -1,6 +1,7 @@
 package memory;
 
 import deck.Deck;
+import java.util.ArrayList;
 import javafx.scene.control.Button;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -12,11 +13,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import java.util.concurrent.TimeUnit;
 
 
-public class MemoryController {
+public class MemoryController{
 
     // supporting class to map card spaces
     public class CardBlock {
@@ -50,23 +50,21 @@ public class MemoryController {
                 //System.out.println("clicked card! " + fn);
                 Image frontImage = new Image(fn, 50, 100, true, false);
                 button.setGraphic(new ImageView(frontImage));
-                Boolean flipBack = memoryModel.nextFlip(this);
+                //button.
+                int flipBack = memoryModel.nextFlip(this);
 
-                /*// pause after showing second card
-                try {
-                    TimeUnit.SECONDS.sleep(5);
-                }
-                catch(InterruptedException ie) {
-                    System.err.println(ie);
-                }*/
 
-                if(flipBack) {
+                if(flipBack == 1) {
                     memoryModel.getFirstCard().flipDown();
                     flipDown();
 
                 }
+                else if(flipBack == 2) {
+                    memoryModel.getFirstCard().getButton().setGraphic(null);
+                    button.setGraphic(null);
+                }
 
-            }
+            } // card up
             //else say card is already up or do nothing
         }
         public void flipDown() {
@@ -102,7 +100,7 @@ public class MemoryController {
     }
 
     public SimpleIntegerProperty getCurrentPlayer() {
-        return memoryModel.getCurrentPlayerProperty();
+        return memoryModel.getDisplayPlayerProperty();
     }
 
 
@@ -119,6 +117,15 @@ public class MemoryController {
                     @Override
                     public void handle(ActionEvent event) {
                         cardBlock.flipCard();
+
+                        // pause after showing second card
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        }
+                        catch(InterruptedException ie) {
+                            System.err.println(ie);
+                        }
+
                     }
                 });
                 index++;
@@ -127,15 +134,20 @@ public class MemoryController {
 
     }
 
+    /*
     public void flipDown(CardBlock cb) {
         cb.setCardUp(false);
         cb.getButton().setGraphic(new ImageView(memoryView.getBackImage()));
-    }
+    }*/
 
-    public void displayWinner(int winningPlayer) {
+    public void displayWinners(ArrayList<Integer> winningPlayers) {
         VBox dialogVbox = new VBox(20);
-        Text errText = new Text("Player " + winningPlayer + "WINS!");
-        dialogVbox.getChildren().add(errText);
+        String msg = "Winning players!\n";
+        for(Integer i: winningPlayers) {
+            msg += i + " ";
+        }
+        Text text = new Text(msg);
+        dialogVbox.getChildren().add(text);
         Scene dialogScene = new Scene(dialogVbox, 300, 50);
         final Stage dialog = new Stage();
         dialog.setScene(dialogScene);
