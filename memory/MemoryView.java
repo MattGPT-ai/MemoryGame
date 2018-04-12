@@ -37,6 +37,7 @@ public class MemoryView {
         numCols = 13;
         int index = 0;
 
+
         // fill grid
         for(int row=0; row<numRows; row++) {
             for(int col=0; col<numCols; col++) {
